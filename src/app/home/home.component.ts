@@ -32,7 +32,6 @@ export class HomeComponent implements OnInit {
         const message = "Could not load courses";
         this.messagesService.showErrors(message);
         console.log(message, err);
-        //zakończy działanie courses$ Observable
         return throwError(err);
       })
     );
