@@ -1,34 +1,8 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  OnInit,
-  ViewChild,
-} from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { Course } from "../model/course";
-import {
-  debounceTime,
-  distinctUntilChanged,
-  startWith,
-  delay,
-  map,
-  concatMap,
-  switchMap,
-  withLatestFrom,
-  concatAll,
-  shareReplay,
-  catchError,
-  tap,
-} from "rxjs/operators";
-import {
-  merge,
-  fromEvent,
-  Observable,
-  concat,
-  throwError,
-  combineLatest,
-} from "rxjs";
+import { map, startWith, tap } from "rxjs/operators";
+import { Observable, combineLatest } from "rxjs";
 import { Lesson } from "../model/lesson";
 import { CoursesService } from "../services/courses.service";
 
@@ -52,11 +26,14 @@ export class CourseComponent implements OnInit {
 
   ngOnInit() {
     const courseId = parseInt(this.route.snapshot.paramMap.get("courseId"));
-    const course$ = this.coursesService.loadCourseById(courseId);
-    const lessons$ = this.coursesService.loadAllCourseLessons(courseId);
+    const course$ = this.coursesService
+      .loadCourseById(courseId)
+      .pipe(startWith(null));
+    const lessons$ = this.coursesService
+      .loadAllCourseLessons(courseId)
+      .pipe(startWith([]));
 
     this.data$ = combineLatest([course$, lessons$]).pipe(
-      //otrzymamy tablicę więć należy to przetworzyć w obiekt
       map(([course, lessons]) => {
         return {
           course,
